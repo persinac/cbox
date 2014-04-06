@@ -1,5 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+	  <link rel="stylesheet" type="text/css" href="BoxRegistration.css">
+   </HEAD>
+   <BODY>
+
 <h1>Box Registration</h1>
-<form action="BoxRegistration.php" method="post">
+<form method="post" id="boxregform">
 	<div>
 		<label for="First Name" class="title">First Name:</label>
 		<input type="text" id="firstName" name="firstName" />
@@ -7,13 +16,6 @@
 	<div>
 		<label for="Last Name" class="title">Last Name:</label>
 		<input type="text" id="lastName" name="lastName" />
-	</div>
-	<div>
-		<span class="title">Gender:</span>
-		<input type="radio" name="gender" id="male" value="M" />
-		<label for="male">Male</label>
-		<input type="radio name="gender" id="femal" value="F" />
-		<label for="female">Female</label><br />
 	</div>
 	<div>
 		<label for="Phone Number" class="title">Phone Number:</label>
@@ -24,8 +26,8 @@
 		<input type="text" id="boxName" name="boxName" />
 	</div>
 	<div>
-		<label for="Email" class="title">First Email:</label>
-		<input type="text" id="email" email="email" />
+		<label for="Email" class="title">Email:</label>
+		<input type="text" id="email" name="email" />
 	</div>
 	<div>
 		<label for="Street Address" class="title">Street Address:</label>
@@ -48,7 +50,40 @@
 		<input type="text" id="country" name="country" />
 	</div>
 	<div>
-		<input type="submit" value="Register" id="submit" />
+		<input type="submit" value="Register" id="submit" /> 
 	</div>
 </form>
-	
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="dist/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script id="source" language="javascript" type="text/javascript">
+
+$(function() {
+	$("input#submit").click(function() {
+    	alert("CLICKEDDDDD!!!!!");
+		var datastring = $("#boxregform").serializeArray();
+		alert("DATASTRING: "+datastring);
+		$.ajax({
+			type: "POST",
+			url: "queryBoxRegistration.php",
+			data: datastring,
+			success: function(data){
+				 overlay(); 
+			}
+		});
+		alert("POST AJAX");
+    });
+});
+
+function overlay() {
+	alert("Great success");
+}
+
+
+</script>
+
+
+
+	</BODY>
+</HTML>
