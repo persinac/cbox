@@ -135,22 +135,42 @@ if (isset($_SESSION['MM_UserID'])) {
      </div> <!-- END OF new_wod_container -->
     
    
-<h2>Example of creating Modals with Twitter Bootstrap</h2>
 	<div id="example_modal" class="modal" style="display:none; ">
         <div class="modal-header">
           <a class="close" data-dismiss="modal">×</a>
-          <h3>This is a Modal Heading</h3>
+          <h3>Scale for Intermediate and Novice</h3>
         </div>
         <div class="modal-body">
-          <h4>Text in a modal</h4>
-          <p>You can add some text here.</p>                
+        	<!-- Grab number of rows and place that many into here -->  
+            <form method="POST" id="inter_new_wod_form" class="new_wod">
+                <div id="inter_new_wod_row">
+                <h4>Intermediate</h4>
+                    Movement: <input type="text" name="inter_movement[]" class="inter_movement" id="inter_movement_0"/> 
+                    Weight (leave blank if bodyweight): <input type="text" name="inter_weight[]" class="inter_weight" id="inter_weight_0"/> 
+                    Reps: <input type="text" name="inter_reps[]" class="inter_reps" id="inter_reps_0"/>
+                    <p></p>
+                    
+                </div> <!-- END OF new_wod -->
+             </form> 
+             <hr class="featurette-divider"> 
+             <form method="POST" id="nov_new_wod_form" class="new_wod">
+                <div id="novice_new_wod_row">
+                <h4>Novice</h4>
+                    Movement: <input type="text" name="nov_movement[]" class="nov_movement" id="nov_movement_0"/> 
+                    Weight (leave blank if bodyweight): <input type="text" name="nov_weight[]" class="nov_weight" id="nov_weight_0"/> 
+                    Reps: <input type="text" name="nov_reps[]" class="nov_reps" id="nov_reps_0"/>
+                    <p></p>
+                    
+                </div> <!-- END OF new_wod -->
+             </form>          
         </div>
         <div class="modal-footer">
+          <button class="btn btn-success" id="load">Load RX Data</button>
           <button class="btn btn-success" id="submit">submit</button>
           <a href="#" class="btn" data-dismiss="modal">Close</a>
         </div>
     </div>
-<p><a data-toggle="modal" href="#example_modal" class="btn btn-primary btn-large">Launch demo        modal</a></p>
+<p><a data-toggle="modal" href="#example_modal" class="btn btn-primary btn-small">Set Scaled Movements</a></p>
    
     
     <hr class="featurette-divider">
@@ -185,6 +205,14 @@ if (isset($_SESSION['MM_UserID'])) {
 
 <script id="source" language="javascript" type="text/javascript">
 
+var movementArray = new Array();
+var weightArray = new Array();
+var repArray = new Array();
+
+var data_one;
+var data_two;
+var data_three;
+
 $(document).ready(function() {
 	event.preventDefault();
 	//load past wods/str/pwods
@@ -199,9 +227,18 @@ $(function() {
   });
   
   $(function() {
-//twitter bootstrap script
+	//twitter bootstrap script
     $("button#submit").click(function(){
-		alert("YOU CLICKED SUBMIT!!!");
+		//alert("Number of rows: " + (rowNum+1));
+		data_one = $('#inter_new_wod_form').serializeArray();
+		data_two = $('#nov_new_wod_form').serializeArray();
+		
+		//alert("DATA ONE: " + data_one.toString());
+		//alert("DATA TWO: " + data_two.toString());
+		
+		data_three = data_one.concat(data_two);
+		
+		//alert("DATA THREE: " + data_three.toString());
 		/*
                $.ajax({
                    type: "POST",
@@ -218,6 +255,14 @@ $(function() {
 				  */
     });
 });
+
+$(function() {
+	$("button#load").click(function() {
+    	alert("CLICKEDDDDD!!!!!");
+		addScaledRows();
+    });
+});
+
   
 
 function overlay() {
@@ -419,19 +464,62 @@ function addRow(frm) {
 }
 function removeRow(rnum) {
 	$('#rowNum'+rnum).remove();
+	if(rowNum > 0) {
+		rowNum = rowNum -1;	
+	}
+}
+
+function addScaledRows()
+{
+	$('.movement').each(function(i, item) {
+        var movement =  $('#movement_'+i+'').val();
+		movementArray.push(movement);
+    });
+	
+	$('.weight').each(function(i, item) {
+        var weight =  $('#weight_'+i+'').val();
+		weightArray.push(weight);
+    });
+	
+	//alert("Post weight check");
+	
+	$('.reps').each(function(i, item) {
+        var reps =  $('#reps_'+i+'').val();
+		repArray.push(reps);
+    });
+	
+	var row = "";
+	//first intermediate
+	for(var i = 1; i < movementArray.length; i++) {
+	row = '<p id="rowNum'+i+'">Movement: <input type="text" name="inter_movement[]" class="inter_movement" id="inter_movement_'+i+'"> Weight (leave blank if bodyweight): <input type="text" name="inter_weight[]" class="inter_weight" id="inter_weight_'+i+'"> Reps: <input type="text" name="inter_reps[]" class="inter_reps" id="inter_reps_'+i+'"></p>';
+	$('#inter_new_wod_row').append(row);
+	}
+	
+	for(var j = 1; j < movementArray.length; j++) {
+	row = '<p id="rowNum'+j+'">Movement: <input type="text" name="nov_movement[]" class="nov_movement" id="nov_movement_'+j+'"> Weight (leave blank if bodyweight): <input type="text" name="nov_weight[]" class="nov_weight" id="nov_weight_'+j+'"> Reps: <input type="text" name="nov_reps[]" class="nov_reps" id="nov_reps_'+j+'"></p>';
+	$('#novice_new_wod_row').append(row);
+	}
 }
 
 function submitWOD() {
 	var datastring = $("#new_wod_form").serializeArray();
-	var sendRequest = false;
+	var sendRequest = true;
+
+	alert("DATASTRING: " + datastring.toString());
+	alert("data_three: " + data_three.toString());
 	
+	var data_four = datastring.concat(data_three);
+	alert("data_four: " + data_four.toString());
 	//WORKING
 	$('.movement').each(function(i, item) {
         var movement =  $('#movement_'+i+'').val();
 		var characterReg = /^[a-zA-Z]*$/;
 		if(!characterReg.test(movement)) {
-			$('#movement_'+i+'').addClass("decoratedErrorField");
+			sendRequest = false;
+			//alert("Invalid character at: Movement " + (i+1));
+			$('#movement_'+i+'').addClass("big_input_wod_error");
 		}
+		//else { movementArray.push(movement); }
         //alert(movement);
     });
 	
@@ -443,8 +531,11 @@ function submitWOD() {
 		//var characterReg = /^\d+$/;
 		var characterReg = /^[0-9]*$/;
 		if(!characterReg.test(weight)) {
-			$('#weight_'+i+'').addClass("decoratedErrorField");
+			sendRequest = false;
+			//alert("Invalid character at: Weight " + (i+1));
+			$('#weight_'+i+'').addClass("big_input_wod_error ");
 		}
+		//else { weightArray.push(weight); }
         //alert(weight);
     });
 	
@@ -455,21 +546,30 @@ function submitWOD() {
         var reps =  $('#reps_'+i+'').val();
 		var characterReg = /^[0-9]*$/;
 		if(!characterReg.test(reps)) {
-			$('#reps_'+i+'').addClass("decoratedErrorField");
+			sendRequest = false;
+			//alert("Invalid character at: Reps " + (i+1));
+			$('#reps_'+i+'').addClass("big_input_wod_error ");
 		}
+		//else { repArray.push(reps); }
         //alert(reps);
     });
 	
-	//alert("Post reps check");
 	
+	$.each(data_four, function(i, field){
+    	//alert("DATA: " +field.name + ":" + field.value + " ");
+  	});
+	
+	//alert("Post reps check");
+	if(sendRequest == true) {
         $.ajax({
             type: "POST",
             url: "php_form_test.php",
-            data: $("#new_wod_form").serialize(),
+            data: data_four,
             success: function(data) {
                  alert('Data send:' + data);
             }
         });
+	}
 }
 
 
