@@ -1,17 +1,19 @@
+
 <?php require_once('Connections/cboxConn.php'); ?>
 <?php
-#session_start();
+session_start();
+mysql_select_db($database_cboxConn, $cboxConn);
 
-$t_firstname = $_POST['firstname'];
-$t_lastname = $_POST['lastname'];
-$t_phoneNumber = $_POST['phoneNumber'];
-$t_boxName = $_POST['boxName'];
-$t_email = $_POST['email'];
-$t_streetAddress = $_POST['streetAddress'];
-$t_city = $_POST['city'];
-$t_state= $_POST['state'];
-$t_zipCode= $_POST['zipCode'];
-$t_country= $_POST['country'];
+$t_firstname = mysql_real_escape_string($_POST['firstName']);
+$t_lastname = mysql_real_escape_string($_POST['lastName']);
+$t_phoneNumber = mysql_real_escape_string($_POST['phoneNumber']);
+$t_boxName = mysql_real_escape_string($_POST['boxName']);
+$t_email = mysql_real_escape_string($_POST['email']);
+$t_streetAddress = mysql_real_escape_string($_POST['streetAddress']);
+$t_city = mysql_real_escape_string($_POST['city']);
+$t_state= mysql_real_escape_string($_POST['state']);
+$t_zipCode= mysql_real_escape_string($_POST['zipcode']);
+$t_country= mysql_real_escape_string($_POST['country']);
 
 #######
 #
@@ -21,26 +23,19 @@ $t_country= $_POST['country'];
 #
 #######
 
-
-mysql_select_db($database_cboxConn, $cboxConn);
-
 $query_selectMax = "select max(box_id) from box";
-
 $selectMax = mysql_query($query_selectMax, $cboxConn) or die(mysql_error());
-$totalRows_getAdminWODs = mysql_num_rows($selectMax);
-####echo $totalRows_getAdminWODs;
 $row = mysql_fetch_array($selectMax);
-$row= $row+1;
-$t_box_id=$row;
+$result= $row[0]+1;
+$t_box_id=$result;
 
-$query_registerNewBox = "insert into box values ('{$t_box_id}', '{$t_box_name}', '{$t_streetAddress}', '{$t_city}', '{$t_state}', '{$t_Zip}', '{$t_Country}', '{$t_phoneNumber}', '{$t_firstName}', '{$t_lastName}')";
+$query_registerNewBox = "insert into box values ('{$t_box_id}', '{$t_boxName}', '{$t_streetAddress}', '{$t_city}', '{$t_state}', '{$t_zipCode}', '{$t_country}', '{$t_phoneNumber}', '{$t_firstname}', '{$t_lastname}')";
 
-$retval = mysql_query( $query_insert_wod, $cboxConn );
+$retval = mysql_query($query_registerNewBox, $cboxConn );
 if(! $retval )
 {
  die('Could not enter data: ' . mysql_error());
 }
 
 mysql_close($cboxConn);
-
 ?>
