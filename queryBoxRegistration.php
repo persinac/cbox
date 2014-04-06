@@ -31,7 +31,7 @@ $totalRows_getAdminWODs = mysql_num_rows($selectMax);
 ####echo $totalRows_getAdminWODs;
 $row = mysql_fetch_array($selectMax);
 $row= $row+1;
-
+$t_box_id=$row;
 
 $query_registerNewBox = "insert into box values ('{$t_box_id}', '{$t_box_name}', '{$t_streetAddress}', '{$t_city}', '{$t_state}', '{$t_Zip}', '{$t_Country}', '{$t_phoneNumber}', '{$t_firstName}', '{$t_lastName}')";
 
